@@ -15,7 +15,7 @@ import dev.guardrail.generators.{ CustomExtractionField, LanguageParameter, Lang
 import dev.guardrail.generators.syntax._
 import dev.guardrail.generators.operations.TracingLabelFormatter
 import dev.guardrail.generators.scala.syntax._
-import dev.guardrail.generators.scala.{ CirceModelGenerator, ModelGeneratorType, ResponseADTHelper }
+import dev.guardrail.generators.scala.{ CirceModelGenerator, ModelGeneratorType }
 import dev.guardrail.generators.scala.ScalaLanguage
 import dev.guardrail.generators.spi.{ ModuleLoadResult, ServerGeneratorLoader }
 import dev.guardrail.terms.{ ContentType, Header, Response, Responses }

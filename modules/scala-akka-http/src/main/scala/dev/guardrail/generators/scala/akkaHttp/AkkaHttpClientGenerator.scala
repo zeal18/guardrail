@@ -11,14 +11,7 @@ import scala.reflect.runtime.universe.typeTag
 import dev.guardrail.Target
 import dev.guardrail.core.{ SupportDefinition, Tracker }
 import dev.guardrail.generators.{ LanguageParameter, LanguageParameters, RawParameterName, RenderedClientOperation }
-import dev.guardrail.generators.scala.{
-  CirceModelGenerator,
-  CirceRefinedModelGenerator,
-  JacksonModelGenerator,
-  ModelGeneratorType,
-  ResponseADTHelper,
-  ScalaLanguage
-}
+import dev.guardrail.generators.scala.{ CirceModelGenerator, CirceRefinedModelGenerator, JacksonModelGenerator, ModelGeneratorType, ScalaLanguage }
 import dev.guardrail.generators.scala.syntax._
 import dev.guardrail.generators.spi.{ ClientGeneratorLoader, ModuleLoadResult, ProtocolGeneratorLoader }
 import dev.guardrail.generators.syntax._

@@ -12,7 +12,7 @@ import scala.collection.immutable.Seq
 import dev.guardrail.Target
 import dev.guardrail.core.{ SupportDefinition, Tracker }
 import dev.guardrail.generators.scala.syntax._
-import dev.guardrail.generators.scala.{ ResponseADTHelper, ScalaLanguage }
+import dev.guardrail.generators.scala.ScalaLanguage
 import dev.guardrail.generators.spi.{ ClientGeneratorLoader, ModuleLoadResult }
 import dev.guardrail.generators.syntax._
 import dev.guardrail.generators.{ LanguageParameter, LanguageParameters, RawParameterName, RenderedClientOperation }
