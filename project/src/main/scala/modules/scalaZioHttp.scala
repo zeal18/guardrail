@@ -16,7 +16,7 @@ object scalaZioHttp {
     val catsEffectVersion      = "3.3.5"
     val http4sVersion          = "0.23.9"
 
-    val zioHttpVersion = "0.0.3"
+    val zioHttpVersion = "3.0.0-RC1"
 
     Seq(
       "javax.annotation" %  "javax.annotation-api"  % javaxAnnotationVersion, // for jdk11
@@ -26,10 +26,6 @@ object scalaZioHttp {
     ) ++ Seq(
       "io.circe"         %% "circe-core"            % circeVersion,
       "io.circe"         %% "circe-parser"          % circeVersion,
-      "org.http4s"       %% "http4s-blaze-client"   % http4sVersion,
-      "org.http4s"       %% "http4s-blaze-server"   % http4sVersion,
-      "org.http4s"       %% "http4s-circe"          % http4sVersion,
-      "org.http4s"       %% "http4s-dsl"            % http4sVersion,
       "org.typelevel"    %% "cats-core"             % catsVersion,
       "org.typelevel"    %% "cats-effect"           % catsEffectVersion,
     ).map(_.cross(CrossVersion.for3Use2_13))

@@ -179,8 +179,8 @@ class ZioHttpServerGenerator private (version: ZioHttpVersion) extends ServerTer
       )
 
       val authenticator = List(q"""
-      def authenticate[F[_]: _root_.cats.Monad, ${tparam"$authContextTypeName"}](
-        middleware: ($authSchemesTypeName, Set[String], Request[F]) => F[Either[$authErrorTypeName, $authContextTypeName]],
+      def authenticate[${tparam"$authContextTypeName"}](
+        middleware: ($authSchemesTypeName, Set[String], Request) => IO[$authErrorTypeName, $authContextTypeName],
         schemes: _root_.cats.data.NonEmptyList[_root_.cats.data.NonEmptyMap[$authSchemesTypeName, Set[String]]],
         req: Request[F]
       ): F[Either[$authErrorTypeName, $authContextTypeName]] = {
@@ -260,7 +260,7 @@ class ZioHttpServerGenerator private (version: ZioHttpVersion) extends ServerTer
         if (authImplementation == Native || (authImplementation != Disable && securityExposure != SecurityExposure.Undefined)) {
           List(tparam"$authContextTypeName")
         } else List.empty
-      tParams = List(tparam"F[_]") ++ extractType ++ authType
+      tParams = Nil ++ extractType ++ authType
     } yield q"""
     trait ${Type.Name(handlerName)}[..$tParams] {
       ..${methodSigs ++ handlerDefinitions}
@@ -334,11 +334,12 @@ class ZioHttpServerGenerator private (version: ZioHttpVersion) extends ServerTer
         _ <- Target.log.debug(s"Args: ${resourceName}, ${handlerName}, <combinedRouteTerms>, ${extraRouteParams}")
         extractType     = List(customExtractionTypeName).map(x => tparam"$x").filter(_ => customExtraction)
         authType        = List(tparam"$authContextTypeName").filter(_ => securitySchemesDefinitions.nonEmpty || authImplementation == AuthImplementation.Native)
-        resourceTParams = List(tparam"F[_]") ++ extractType ++ authType
-        handlerTParams = List(Type.Name("F")) ++
-          List(customExtractionTypeName).filter(_ => customExtraction) ++
+        resourceTParams = extractType ++ authType
+        handlerTParams = List(customExtractionTypeName).filter(_ => customExtraction) ++
           List(authContextTypeName).filter(_ => securitySchemesDefinitions.nonEmpty || authImplementation == AuthImplementation.Native)
-        routesParams = List(param"handler: ${Type.Name(handlerName)}[..$handlerTParams]")
+        routesParams =
+          if (handlerTParams.isEmpty) List(param"handler: ${Type.Name(handlerName)}")
+          else List(param"handler: ${Type.Name(handlerName)}[..$handlerTParams]")
         routesDefinition = authImplementation match {
           case Native => q"""
             def routes(..${routesParams}): AuthedRoutes[$authContextTypeName, F] = AuthedRoutes.of {
@@ -346,7 +347,7 @@ class ZioHttpServerGenerator private (version: ZioHttpVersion) extends ServerTer
               }
           """
           case _ => q"""
-            def routes(..${routesParams}): HttpRoutes[F] = HttpRoutes.of {
+            def routes(..${routesParams}): HttpApp[Any, Nothing] = Http.collect[Request] {
                 ..${combinedRouteTerms}
               }
           """
@@ -369,15 +370,7 @@ class ZioHttpServerGenerator private (version: ZioHttpVersion) extends ServerTer
     )
 
   def getExtraImports(tracing: Boolean, supportPackage: NonEmptyList[String]) =
-    Target.log.function("getExtraImports")(
-      for {
-        _ <- Target.log.debug(s"Args: ${tracing}")
-      } yield List(
-        q"import org.http4s.circe.CirceInstances",
-        q"import org.http4s.dsl.Http4sDsl",
-        q"import fs2.text._"
-      )
-    )
+    Target.log.function("getExtraImports")(Target.pure(List.empty[ScalaLanguage#Import]))
 
   def httpMethodToZioHttp(method: HttpMethod): Target[Term.Name] = method match {
     case HttpMethod.DELETE => Target.pure(Term.Name("DELETE"))
